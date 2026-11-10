@@ -1,31 +1,18 @@
-<!DOCTYPE html>
-<!-- A placeholder from the Home Sales template. Replace this file with your site's first page. -->
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Under construction</title>
-  <!-- An empty icon, so the browser doesn't log an error looking for favicon.ico -->
-  <link rel="icon" href="data:,">
-  <style>
-    :root { color-scheme: light dark; }
-    body {
-      max-width: 40rem;
-      margin: 0 auto;
-      padding: 3rem 1rem;
-      font-family: system-ui, sans-serif;
-      line-height: 1.5;
-    }
-    footer { margin-top: 3rem; font-size: 0.875rem; opacity: 0.75; }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>This site is under construction</h1>
-    <p>It will show findings from the College-town home sales dataset.</p>
-  </main>
-  <footer>
-    <p>Data: College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation Center for Business Emerging Technologies. Data collected March 2026.</p>
-  </footer>
-</body>
-</html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Home sale prices in college towns</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#182334;background:#f6f7f9}body{max-width:1100px;margin:auto;padding:2rem 1.25rem;line-height:1.5}h1{line-height:1.15}p{max-width:75ch}.card{background:white;border:1px solid #d9dee7;border-radius:12px;padding:1rem;margin:1.5rem 0;overflow-x:auto}svg{display:block;min-width:760px;width:100%;height:auto}.axis{stroke:#aeb8c6;stroke-width:1}.bar{fill:#286d82}.bar:hover{fill:#17495a}.label{font-size:12px;fill:#293746}.value{font-size:12px;fill:#182334;font-weight:650}.grid{stroke:#e4e8ed;stroke-width:1}table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:.65rem .5rem;border-bottom:1px solid #e3e7ec}th{background:#f4f6f8}td:nth-child(2),td:nth-child(3),th:nth-child(2),th:nth-child(3){text-align:right;font-variant-numeric:tabular-nums}tbody tr:hover{background:#f5f9fa}footer{margin:2rem 0;color:#505b68;font-size:.9rem}
+</style></head><body><main><h1>Home sale prices in college towns</h1>
+<p>Median sale price by city for completed home sales in the College-town home sales dataset. Each median includes sales of $1,000 or more; prices below that threshold are excluded because some recorded sale prices are implausible. Values are rounded to whole dollars.</p>
+<section class="card" aria-labelledby="chart-heading"><h2 id="chart-heading">Median sale price by city</h2><div id="chart"></div></section>
+<section class="card"><h2>All city medians</h2><table><caption class="sr-only">Median sale prices and qualifying sale counts by city</caption><thead><tr><th scope="col">City</th><th scope="col">Sales included</th><th scope="col">Median sale price</th></tr></thead><tbody id="rows"></tbody></table></section>
+</main><footer>Source: College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation Center for Business Emerging Technologies. Data collected March 2026. Prices are as reported by the collection source and are not verified against county records.</footer>
+<script>
+const data=[{"city": "Davis", "state": "CA", "sales": 941, "median": 889000}, {"city": "Pittsboro", "state": "NC", "sales": 92, "median": 876986}, {"city": "Chapel Hill", "state": "NC", "sales": 2716, "median": 735000}, {"city": "Charlottesville", "state": "VA", "sales": 2774, "median": 615000}, {"city": "Middleton", "state": "WI", "sales": 645, "median": 611000}, {"city": "Carrboro", "state": "NC", "sales": 208, "median": 601250}, {"city": "Ann Arbor", "state": "MI", "sales": 3020, "median": 571000}, {"city": "Newberry", "state": "FL", "sales": 152, "median": 439995}, {"city": "State College", "state": "PA", "sales": 1350, "median": 430000}, {"city": "Madison", "state": "WI", "sales": 5061, "median": 421000}, {"city": "Savoy", "state": "IL", "sales": 247, "median": 402700}, {"city": "West Lafayette", "state": "IN", "sales": 1559, "median": 379900}, {"city": "Athens", "state": "GA", "sales": 2813, "median": 370000}, {"city": "Gainesville", "state": "FL", "sales": 5477, "median": 350000}, {"city": "Iowa City", "state": "IA", "sales": 1909, "median": 342000}, {"city": "Lafayette", "state": "IN", "sales": 3057, "median": 260000}, {"city": "Champaign", "state": "IL", "sales": 2286, "median": 240000}, {"city": "Urbana", "state": "IL", "sales": 1131, "median": 229900}];
+const money=n=>'$'+Math.round(n).toLocaleString('en-US');
+document.querySelector('#rows').innerHTML=data.map(d=>`<tr><th scope="row">${d.city}, ${d.state}</th><td>${d.sales.toLocaleString('en-US')}</td><td>${money(d.median)}</td></tr>`).join('');
+const width=1000,row=34,left=175,right=95,top=20,bottom=45,max=Math.ceil(Math.max(...data.map(d=>d.median))/100000)*100000,plot=width-left-right,height=top+data.length*row+bottom,ticks=5;
+let svg=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="svgtitle svgdesc"><title id="svgtitle">Median home sale prices in 18 college towns</title><desc id="svgdesc">Horizontal bars show the median price of sales of at least $1,000, ordered highest to lowest. Exact rounded values are also in the table below.</desc>`;
+for(let t=0;t<=ticks;t++){const v=max*t/ticks,x=left+plot*t/ticks;svg+=`<line class="grid" x1="${x}" y1="${top}" x2="${x}" y2="${top+data.length*row}"/><text class="label" x="${x}" y="${height-12}" text-anchor="middle">${money(v)}</text>`}
+data.forEach((d,i)=>{const y=top+i*row+6,w=d.median/max*plot;svg+=`<text class="label" x="${left-10}" y="${y+15}" text-anchor="end">${d.city}, ${d.state}</text><rect class="bar" x="${left}" y="${y}" width="${w}" height="22" rx="4"><title>${d.city}, ${d.state}: ${money(d.median)} median, ${d.sales.toLocaleString('en-US')} sales</title></rect><text class="value" x="${left+w+7}" y="${y+15}">${money(d.median)}</text>`});svg+='</svg>';document.querySelector('#chart').innerHTML=svg;
+</script></body></html>
